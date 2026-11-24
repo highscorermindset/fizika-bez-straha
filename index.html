@@ -12,8 +12,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fizika">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon.svg?v=2" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png?v=2">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* osnovno */
@@ -56,7 +56,7 @@ button{font:inherit;color:inherit}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
 .top-in{max-width:980px;margin:0 auto;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{font-family:var(--font-display);font-weight:700;font-size:17px;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:10px}
-.brand i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--marker);color:var(--marker-ink);font-style:normal;font-size:15px}
+.brand i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;font-style:normal}.brand i svg{width:100%;height:100%;display:block}
 .top .sp{flex:1}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;background:var(--paper);flex-wrap:wrap}
 .seg button{border:0;background:transparent;padding:5px 12px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
@@ -263,7 +263,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <body>
 
 <header class="top"><div class="top-in">
-  <a class="brand" href="#"><i>F</i>Fizika bez straha</a>
+  <a class="brand" href="#"><i><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E2D57"/><g fill="none" stroke-width="28" transform="translate(256 256)"><ellipse rx="172" ry="64" stroke="#FFE066"/><ellipse rx="172" ry="64" stroke="#FF8A65" transform="rotate(60)"/><ellipse rx="172" ry="64" stroke="#5FD4C4" transform="rotate(-60)"/></g><circle cx="256" cy="256" r="50" fill="#FFE066"/></svg></i>Fizika bez straha</a>
   <a class="navl" href="#mapa">Mapa veza</a>
   <span class="sp"></span>
   <div class="seg nolatgroup" role="group" aria-label="Pismo" id="scriptSeg">
@@ -336,7 +336,7 @@ function home(){
     });
     h+='</div></section>';
   });
-  h+=`<footer>Sadržaj prati zvanični program fizike za gimnazije u Srbiji (opšti i prirodno-matematički smer), koji prate i svi udžbenici. Kurs nije povezan ni sa jednim izdavačem. Redosled tema u udžbeniku može biti malo drugačiji. Za pripremu kontrolnog uvek proveri i šta je nastavnik zadao. Napredak se čuva samo u ovom pregledaču.</footer>`;
+  h+=`<footer>Sadržaj prati zvanični program fizike za gimnazije u Srbiji (opšti i prirodno-matematički smer), koji prate i svi udžbenici. Kurs nije povezan ni sa jednim izdavačem. Redosled tema u udžbeniku može biti malo drugačiji. Za pripremu kontrolnog uvek proveri i šta je profesor zadao. Napredak se čuva samo u ovom pregledaču.</footer>`;
   app.innerHTML=h;
 }
 
@@ -443,23 +443,23 @@ const OFFICIAL=String(window.KURS_ADRESA||'').trim()||(/^https?:$/.test(location
 const RULE=(n,t,short,body)=>`<details class="rule"><summary><span class="rn">${n}</span><span><b>${t}</b><small>${short}</small></span></summary><div class="rule-b">${body}</div></details>`;
 const RULES=`<div class="rules">
 ${RULE(1,'Navedi odakle je','Ako preuzmeš nešto što je napravljeno baš za ovaj kurs, napiši da je iz kursa „Fizika bez straha“.',`
- <p><b>Fizika pripada svima.</b> Omov zakon, formule, definicije i istorijske činjenice znaju i objašnjavaju svi nastavnici i udžbenici, i nisu „vlasništvo“ ovog kursa. Njih slobodno koristi i objašnjavaj na svoj način, bez ikakvog navođenja.</p>
+ <p><b>Fizika pripada svima.</b> Omov zakon, formule, definicije i istorijske činjenice znaju i objašnjavaju svi profesori i udžbenici, i nisu „vlasništvo“ ovog kursa. Njih slobodno koristi i objašnjavaj na svoj način, bez ikakvog navođenja.</p>
  <p>Pravilo važi samo za ono što je <b>ovde napravljeno</b>: tekstove lekcija kako su napisani, priče sa početka lekcija, rešene zadatke, pitanja iz testova, animacije i mapu veza.</p>
- <ul class="yn"><li class="y">Učenica u grupi drugara podeli pitanja iz testa i napiše „iz kursa Fizika bez straha“.</li><li class="y">Nastavnik na času pokaže animaciju iz kursa i kaže odakle je.</li><li class="y">Profesor sam objasni Omov zakon na času. Ništa ne navodi, jer je to opšte znanje.</li></ul>
+ <ul class="yn"><li class="y">Učenica u grupi drugara podeli pitanja iz testa i napiše „iz kursa Fizika bez straha“.</li><li class="y">Profesor na času pokaže animaciju iz kursa i kaže odakle je.</li><li class="y">Profesor sam objasni Omov zakon na času. Ništa ne navodi, jer je to opšte znanje.</li></ul>
  <p><b>Zašto:</b> ko vidi preuzeti deo, zna gde je ceo kurs i gde je najnovija, ispravljena verzija. Ako je neko nešto menjao, dopiše „uz izmene“, pa se njegove eventualne greške ne pripisuju kursu.</p>
  <p class="ok">Ne moraš da navodiš ničije ime, ne treba ti dozvola i nikome ne moraš da se javljaš.</p>`)}
 ${RULE(2,'Ne naplaćuj','Kurs i sve što od njega napraviš mora da ostane besplatno.',`
- <ul class="yn"><li class="y">Škola ga koristi na času.</li><li class="y">Roditelj ga šalje deci, a nastavnik učenicima.</li><li class="y">Učenici ga dele među sobom, preko linka ili USB-a.</li>
+ <ul class="yn"><li class="y">Škola ga koristi na času.</li><li class="y">Roditelj ga šalje deci, a profesor učenicima.</li><li class="y">Učenici jedni drugima šalju web adresu kursa ili kopiju na USB-u.</li>
  <li class="n">Neko traži novac za pristup kursu („pristup 500 dinara“).</li><li class="n">Neko prodaje kurs na USB-u ili u štampanom obliku.</li><li class="n">Privatni časovi koji se plaćaju, a kurs se koristi kao deo plaćenog časa. To se računa kao zarada.</li></ul>`)}
 ${RULE(3,'Ako menjaš, deli pod istim pravilima','Ko prepravi kurs i da ga dalje, i prepravku mora da da slobodno.',`
- <p><b>Primer:</b> nastavnik doda pet svojih lekcija iz astronomije i podeli ceo kurs dalje. Njegove nove lekcije tada moraju da budu slobodne kao i ostatak kursa: besplatne, uz navođenje izvora, sa istim pravilima. Ne sme da napiše „moje lekcije ne smete da kopirate“.</p>
+ <p><b>Primer:</b> profesor doda pet svojih lekcija iz astronomije i podeli ceo kurs dalje. Njegove nove lekcije tada moraju da budu slobodne kao i ostatak kursa: besplatne, uz navođenje izvora, sa istim pravilima. Ne sme da napiše „moje lekcije ne smete da kopirate“.</p>
  <p><b>Zašto:</b> tako kurs i sve njegove dorade zauvek ostaju slobodni za svu decu.</p>
  <p class="ok">Ovo pravilo važi samo za prerade. Ko kurs deli nepromenjen, ne mora ništa da radi.</p>`)}
 </div>`;
 function openRules(){
   let d=document.getElementById('rulesDlg');
   if(!d){d=document.createElement('dialog');d.id='rulesDlg';d.className='dlg';document.body.appendChild(d)}
-  d.innerHTML=`<div class="dlg-h"><h2>Pravila deljenja</h2><button type="button" class="dlg-x" aria-label="Zatvori">✕</button></div><p>Kurs smeš slobodno da deliš i menjaš. Važe samo tri pravila. Klikni na pravilo da vidiš primere.</p>${RULES}<div class="note"><b>Ako samo prosleđuješ link</b> ili kopiraš kurs bez izmena, sva tri pravila su već ispunjena.</div><div class="stats"><a class="btn" href="#o-kursu">Sve o kursu</a><button type="button" class="btn solid dlg-ok">Razumem</button></div>`;
+  d.innerHTML=`<div class="dlg-h"><h2>Pravila deljenja</h2><button type="button" class="dlg-x" aria-label="Zatvori">✕</button></div><p>Kurs smeš slobodno da deliš i menjaš. Važe samo tri pravila. Klikni na pravilo da vidiš primere.</p>${RULES}<div class="note"><b>Ako samo šalješ web adresu kursa</b> ili ga kopiraš bez izmena, sva tri pravila su već ispunjena.</div><div class="stats"><a class="btn" href="#o-kursu">Sve o kursu</a><button type="button" class="btn solid dlg-ok">Razumem</button></div>`;
   walk(d);
   d.querySelectorAll('.dlg-x,.dlg-ok').forEach(b=>b.onclick=()=>d.close());
   d.querySelector('a').addEventListener('click',()=>d.close());
@@ -476,29 +476,29 @@ function aboutPage(){
    <p>Kurs je u <b>fazi testiranja</b>. U prvoj fazi korišćenja isprobavaju ga učenici, a sadržaj i rad kursa mogu da pregledaju profesori fizike i informatike. Na osnovu njihovih primedbi kurs će se ispravljati i dopunjavati, pa se lekcije i testovi mogu menjati.</p></section>
   <section class="pg"><p class="eyebrow">Važno</p><h2>Odricanje odgovornosti</h2><ul>
    <li><b>Ovo nije zvanični udžbenik.</b> Kurs prati javno dostupan program nastave fizike za gimnazije u Srbiji, ali nije odobren od Ministarstva prosvete i nije povezan ni sa jednim izdavačem udžbenika.</li>
-   <li><b>Kurs je pripremljen uz pomoć veštačke inteligencije.</b> Tekstovi, zadaci, testovi i animacije su pažljivo pravljeni, ali mogu da sadrže greške ili pojednostavljenja. Kurs ne zamenjuje nastavu, udžbenik ni nastavnika. Kad nešto nije jasno ili se razlikuje od onoga što ste radili u školi, važi ono što kaže nastavnik.</li>
+   <li><b>Kurs je pripremljen uz pomoć veštačke inteligencije.</b> Tekstovi, zadaci, testovi i animacije su pažljivo pravljeni, ali mogu da sadrže greške ili pojednostavljenja. Kurs ne zamenjuje nastavu, udžbenik ni profesora. Kad nešto nije jasno ili se razlikuje od onoga što ste radili u školi, važi ono što kaže profesor.</li>
    <li><b>Pojednostavljenja su namerna.</b> Animacije nisu u razmeri (na primer, atom i planine su prikazani tako da se bolje vide), a neke pojave su objašnjene jednostavnije nego u stručnoj literaturi.</li>
    <li><b>Spoljni linkovi.</b> Linkovi „potraži video“ otvaraju pretragu na YouTube-u. Za sadržaj drugih sajtova autor kursa ne odgovara. Mlađim učenicima preporučujemo da videe biraju uz roditelja.</li>
    <li><b>Bez obaveza i prava.</b> Kurs se daje „takav kakav jeste“, bez ikakve garancije. Korišćenjem kursa ne nastaju nikakve obaveze ni prava, ni za korisnika ni za autora, ni tokom ni nakon korišćenja. Autor ne odgovara za eventualnu štetu nastalu korišćenjem kursa, uključujući i ocene u školi.</li></ul></section>
   <section class="pg"><p class="eyebrow">Privatnost</p><h2>Ne prikupljamo podatke</h2>
    <p>Kurs ne traži prijavu, ne prikazuje reklame i ne prati korisnike. Napredak (rezultati testova) i izbor pisma čuvaju se samo u pregledaču na tvom uređaju i niko drugi ih ne vidi. Brisanjem podataka pregledača brišeš i napredak. Kurs ne učitava ništa sa drugih servisa: slova i animacije su deo samog kursa. Stranicu isporučuje servis GitHub Pages, koji kao i svaki server beleži uobičajene tehničke podatke, kao što je IP adresa.</p></section>
   <section class="pg" id="sec-licenca"><p class="eyebrow">Licenca</p><h2>Kurs smeš slobodno da deliš</h2>
-   <p>Kurs možeš da pošalješ drugarima, roditeljima, nastavnicima i školama. Možeš i da ga menjaš i dopunjuješ. Ne treba ti ničija dozvola i nikome ne moraš da se javljaš. Postoje samo <b>tri pravila</b>. Klikni na pravilo da vidiš primere.</p>
+   <p>Kurs možeš da pošalješ drugarima, roditeljima, profesorima i školama. Možeš i da ga menjaš i dopunjuješ. Ne treba ti ničija dozvola i nikome ne moraš da se javljaš. Postoje samo <b>tri pravila</b>. Klikni na pravilo da vidiš primere.</p>
    ${RULES}
-   <div class="note"><b>Ako samo prosleđuješ link</b> ili kopiraš kurs bez izmena, sva tri pravila su već ispunjena. Ne moraš ništa posebno da radiš.</div>
+   <div class="note"><b>Ako samo šalješ web adresu kursa</b> ili ga kopiraš bez izmena, sva tri pravila su već ispunjena. Ne moraš ništa posebno da radiš.</div>
    <p class="hint">Pravni naziv licence je <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license"><span class="f">Creative Commons BY-NC-SA 4.0</span></a>. Fizički zakoni, formule i istorijske činjenice pripadaju svima. Slova koja kurs koristi (Unbounded, Nunito, JetBrains Mono) imaju sopstvenu slobodnu licencu SIL Open Font License.</p></section>
   <section class="pg"><p class="eyebrow">Deljenje</p><h2>Kako da deliš kurs</h2>
-   <p>Zvanična adresa kursa je uvek ista, a na njoj je uvek najnovija, ispravljena verzija:</p>
-   ${OFFICIAL?`<div class="addr"><code class="f" id="officialUrl">${OFFICIAL}</code><button type="button" class="btn" id="copyUrl">Kopiraj adresu</button></div>`:'<p class="note">Ovu kopiju otvaraš sa uređaja, a zvanična adresa u njoj nije upisana. Pitaj osobu od koje si dobio/la kurs za link.</p>'}
-   <ul><li><b>Šalji pun link</b>, bez skraćivača adresa. Ako dobiješ link koji se razlikuje od adrese iznad, ne otvaraj ga.</li>
+   <p>Kurs se nalazi na javnoj web stranici. Svako ga može otvoriti u pregledaču, bez prijave i bez ikakve aplikacije. Zvanična web adresa je uvek ista, a na njoj je uvek najnovija, ispravljena verzija:</p>
+   ${OFFICIAL?`<div class="addr"><code class="f" id="officialUrl">${OFFICIAL}</code><button type="button" class="btn" id="copyUrl">Kopiraj adresu</button></div>`:'<p class="note">Ovu kopiju otvaraš sa uređaja, a zvanična web adresa u njoj nije upisana. Pitaj osobu od koje si dobio/la kurs za adresu.</p>'}
+   <ul><li><b>Šalji punu web adresu</b>, bez skraćivača adresa. Ako dobiješ adresu koja se razlikuje od ove iznad, ne otvaraj je.</li>
    <li><b>Dodaj kurs na početni ekran telefona</b> i otvaraj ga kao aplikaciju. Na Androidu (Chrome): meni ⋮ → „Dodaj na početni ekran“ ili „Instaliraj aplikaciju“. Na iPhone-u (Safari): dugme za deljenje → „Dodaj na početni ekran“. Kad ga jednom otvoriš, kurs radi i bez interneta.</li>
    <li><b>Otvori kurs u običnom pregledaču</b> (Chrome, Safari, Firefox), a ne u pregledaču unutar aplikacije za poruke. Samo tako će se pamtiti tvoj napredak u testovima.</li>
    <li><b>Kopija na USB-u</b> radi i bez interneta, ali se sama ne ažurira. Uporedi oznaku verzije na dnu stranice sa onom na zvaničnoj adresi.</li></ul></section>
   <section class="pg"><p class="eyebrow">Greške i predlozi</p><h2>Pronašao/la si grešku?</h2>
-   <p>Ako primetiš grešku u objašnjenju, zadatku ili testu, javi osobi od koje si dobio/la kurs ili svom nastavniku fizike.</p></section>
+   <p>Ako primetiš grešku u objašnjenju, zadatku ili testu, javi osobi od koje si dobio/la kurs ili svom profesoru fizike.</p></section>
   <nav class="pager"><a href="#">← Sve lekcije</a><a href="#mapa">Mapa veza →</a></nav></article>`;
 }
-const SITEFOOT=`<div class="sitefoot"><p><b>Probna verzija, u fazi testiranja.</b> Besplatan, nekomercijalan obrazovni materijal, slobodan za deljenje. Nije zvanični udžbenik i nije povezan sa izdavačima udžbenika. Pripremljen uz pomoć veštačke inteligencije, pa može da sadrži greške: proveri sa nastavnikom. Korišćenjem ne nastaju nikakve obaveze ni prava.</p>
+const SITEFOOT=`<div class="sitefoot"><p><b>Probna verzija, u fazi testiranja.</b> Besplatan, nekomercijalan obrazovni materijal, slobodan za deljenje. Nije zvanični udžbenik i nije povezan sa izdavačima udžbenika. Pripremljen uz pomoć veštačke inteligencije, pa može da sadrži greške: proveri sa profesorom. Korišćenjem ne nastaju nikakve obaveze ni prava.</p>
 <p class="sf-row"><span>Verzija ${VERSION}</span><span class="f">CC BY-NC-SA 4.0</span><button type="button" class="linkbtn" data-rules>Pravila deljenja</button><a href="#o-kursu">O kursu i privatnost</a></p></div>`;
 
 function quiz(host,l){
@@ -541,7 +541,7 @@ function route(){
 function setScriptBtns(){document.querySelectorAll('#scriptSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===mode))}
 document.querySelectorAll('#scriptSeg button').forEach(b=>b.onclick=()=>{
   if(mode===b.dataset.m)return; mode=b.dataset.m; try{localStorage.setItem('fiz-pismo',mode)}catch(e){}
-  setScriptBtns(); document.querySelector('.brand').innerHTML='<i>F</i>Fizika bez straha'; document.querySelector('.navl').textContent='Mapa veza';
+  setScriptBtns(); document.querySelector('.brand').innerHTML='<i><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="#1E2D57"/><g fill="none" stroke-width="28" transform="translate(256 256)"><ellipse rx="172" ry="64" stroke="#FFE066"/><ellipse rx="172" ry="64" stroke="#FF8A65" transform="rotate(60)"/><ellipse rx="172" ry="64" stroke="#5FD4C4" transform="rotate(-60)"/></g><circle cx="256" cy="256" r="50" fill="#FFE066"/></svg></i>Fizika bez straha'; document.querySelector('.navl').textContent='Mapa veza';
   const b2=document.querySelectorAll('#scriptSeg button'); b2[0].textContent='Latinica'; b2[1].textContent=mode==='cyr'?'Ћирилица':'Ćirilica';
   const y=window.scrollY; route(); window.scrollTo(0,y);
 });
