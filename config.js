@@ -6,4 +6,4 @@
   Adresa se prikazuje na stranici „O kursu“, pa i kopije sa USB-a znaju gde je najnovija verzija.
   Ako ostane prazno, kurs prikazuje adresu sa koje je otvoren.
 */
-window.KURS_ADRESA = 'https://fizika-bez-straha.github.io/fizika-bez-straha';
+window.KURS_ADRESA = 'https://highscorermindset.github.io/fizika-bez-straha';
