@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="sr-Latn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fizika bez straha</title>
+<meta name="description" content="Besplatan interaktivni kurs fizike za gimnaziju, od 1. do 4. razreda, sa animacijama i testovima.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1D2925" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fizika">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+/* osnovno */
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+body{margin:0} img{max-width:100%} [hidden]{display:none!important}
+/* Layout: school notebook (light) / chalkboard (dark); one reading column, lessons as a vertical sequence of "notebook pages". */
+:root{
+  --paper:#F3F6FA; --grid:#DFE7F1; --card:#FFFFFF; --ink:#1B2A4A; --muted:#55657F; --line:#CDD8E6;
+  --marker:#FFE066; --marker-ink:#1B2A4A;
+  --c-blue:#2563C9; --c-red:#D4433A; --c-green:#1E8757; --c-orange:#CF7317; --c-violet:#6E46C0;
+  --sim-bg:#FFFFFF; --ok-bg:#E2F3E9; --bad-bg:#FBE5E2;
+  --y1:#2563C9; --y2:#CF7317; --y3:#6E46C0; --y4:#0E7C86;
+  --font-display:'Unbounded', 'Segoe UI', system-ui, sans-serif;
+  --font-body:'Nunito', 'Segoe UI', system-ui, sans-serif;
+  --font-f:'JetBrains Mono', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#16201D; --grid:#1E2A26; --card:#1D2925; --ink:#EDF2EA; --muted:#A7B6AC; --line:#33453E;
+  --marker:#E8C547; --marker-ink:#16201D;
+  --c-blue:#7DAAF3; --c-red:#F2806F; --c-green:#62CC97; --c-orange:#F0A75A; --c-violet:#B69AF1;
+  --sim-bg:#121A18; --ok-bg:#1E3A2B; --bad-bg:#3E2522;
+  --y1:#7DAAF3; --y2:#F0A75A; --y3:#B69AF1; --y4:#4FC9D2; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#16201D; --grid:#1E2A26; --card:#1D2925; --ink:#EDF2EA; --muted:#A7B6AC; --line:#33453E;
+  --marker:#E8C547; --marker-ink:#16201D;
+  --c-blue:#7DAAF3; --c-red:#F2806F; --c-green:#62CC97; --c-orange:#F0A75A; --c-violet:#B69AF1;
+  --sim-bg:#121A18; --ok-bg:#1E3A2B; --bad-bg:#3E2522;
+  --y1:#7DAAF3; --y2:#F0A75A; --y3:#B69AF1; --y4:#4FC9D2; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
+a{color:var(--c-blue)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--c-blue);outline-offset:2px;border-radius:6px}
+.f{font-family:var(--font-f);font-weight:500;font-size:.92em;overflow-wrap:anywhere}
+.pg>*,.lesson>*,.qcard>*{min-width:0}
+.hl{background:linear-gradient(transparent 55%,var(--marker) 55%);color:inherit;padding:0 2px}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.top-in{max-width:980px;margin:0 auto;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--font-display);font-weight:700;font-size:17px;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:10px}
+.brand i{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--marker);color:var(--marker-ink);font-style:normal;font-size:15px}
+.top .sp{flex:1}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;background:var(--paper);flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:5px 12px;border-radius:999px;cursor:pointer;font-weight:700;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+
+main{max-width:980px;margin:0 auto;padding-block:28px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.25;margin:0}
+h1{font-size:clamp(26px,4.6vw,40px);font-weight:700}
+h2{font-size:clamp(19px,2.6vw,23px);font-weight:700}
+h3{font-size:17px;font-weight:500}
+p{margin:0}
+
+/* home */
+.hero{display:grid;gap:14px;padding-bottom:22px}
+.hero .lead{font-size:19px;max-width:62ch;color:var(--muted)}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px}
+.bar{height:10px;border-radius:99px;background:var(--grid);overflow:hidden;max-width:420px}
+.bar span{display:block;height:100%;background:var(--c-green);border-radius:99px}
+.cta{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--card);text-decoration:none;border-radius:12px;padding:12px 18px;font-weight:800;width:max-content;max-width:100%}
+.howto{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:grid;gap:10px;margin:8px 0 34px}
+.howto ol{margin:0;padding-left:22px;display:grid;gap:4px}
+.year{margin:0 0 38px}
+.year-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--yc);padding-bottom:8px;margin-bottom:14px}
+.year-h h2{color:var(--yc)}
+.year-h p{color:var(--muted);font-weight:600}
+.y1{--yc:var(--y1)} .y2{--yc:var(--y2)} .y3{--yc:var(--y3)} .y4{--yc:var(--y4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.lcard{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;transition:transform .15s,border-color .15s}
+.lcard:hover{transform:translateY(-2px);border-color:var(--yc)}
+.lnum{grid-row:span 3;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-family:var(--font-display);font-weight:700;background:var(--yc);color:var(--card);font-size:15px}
+.lcard b{font-size:16px;line-height:1.3}
+.lcard small{color:var(--muted);font-size:14px;line-height:1.4}
+.lmeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tag{font-size:12px;font-weight:800;border-radius:6px;padding:1px 8px;background:var(--paper);color:var(--muted);letter-spacing:.02em}
+.tag.ok{background:var(--ok-bg);color:var(--c-green)}
+.tag.mid{background:var(--bad-bg);color:var(--c-red)}
+
+/* lesson */
+.crumb{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-weight:700;font-size:15px;margin-bottom:14px}
+.crumb a{text-decoration:none}
+.crumb span{color:var(--muted)}
+.lesson{display:grid;gap:22px}
+.lhead{display:grid;gap:10px}
+.lhead .lead{font-size:19px;color:var(--muted);max-width:60ch}
+.jump{display:flex;flex-wrap:wrap;gap:6px}
+.jump button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:700;cursor:pointer;color:var(--muted)}
+.jump button:hover{color:var(--ink);border-color:var(--yc)}
+.pg{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px clamp(16px,3vw,28px);display:grid;gap:12px;min-width:0}
+.pg p,.pg li{max-width:68ch}
+.pg ul,.pg ol{margin:0;padding-left:22px;display:grid;gap:6px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--yc)}
+.hook{border-left:6px solid var(--yc);background:var(--card)}
+.hook p{font-size:18px}
+.note{background:var(--paper);border-radius:12px;padding:10px 14px;font-size:16px}
+.note b{color:var(--yc)}
+.lab{border:2px solid var(--yc)}
+.hint{color:var(--muted)}
+.sim{display:grid;gap:10px;min-width:0}
+.sim canvas{width:100%;display:block;border-radius:12px;border:1px solid var(--line)}
+.sim-readout{display:flex;flex-wrap:wrap;gap:8px}
+.sim-readout div{background:var(--paper);border-radius:10px;padding:5px 12px;font-size:14px;font-weight:700;display:flex;gap:8px;align-items:baseline}
+.sim-readout span{color:var(--muted);font-weight:600}
+.sim-ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.ctl{display:grid;grid-template-columns:auto auto;gap:0 10px;align-items:center;font-weight:700;font-size:14px;min-width:min(240px,100%);flex:1 1 220px}
+.ctl input{grid-column:1/-1;width:100%;accent-color:var(--c-blue)}
+.ctl output{justify-self:end;color:var(--c-blue)}
+.btn-sim{border:0;background:var(--ink);color:var(--card);border-radius:10px;padding:8px 14px;font-weight:800;cursor:pointer;font-size:14px}
+.btn-sim.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.fcard{border:1px dashed var(--line);border-radius:14px;padding:14px;display:grid;gap:8px;align-content:start;background:var(--paper)}
+.fcard .big{font-family:var(--font-f);font-size:22px;font-weight:700;color:var(--ink);overflow-x:auto}
+.fcard .big .f{font-size:1em}
+.task{font-weight:700;font-size:18px}
+.ex-steps li{padding:2px 0}
+.ex-ans{background:var(--ok-bg);border-radius:12px;padding:10px 14px;font-weight:700}
+.btn{border:1px solid var(--ink);background:transparent;border-radius:10px;padding:8px 14px;font-weight:800;cursor:pointer;width:max-content;max-width:100%}
+.btn.solid{background:var(--ink);color:var(--card)}
+.mem{background:var(--marker);color:var(--marker-ink);border:0}
+.mem .eyebrow{color:var(--marker-ink)}
+.mem li::marker{content:"✓  "}
+.vid a{font-weight:800}
+.quiz{border:2px dashed var(--yc)}
+.qcard{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:10px}
+.qn{font-size:13px;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.qt{font-weight:700;font-size:18px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;cursor:pointer;font-size:16px}
+.opt:hover{border-color:var(--yc)}
+.ol{flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:var(--paper);font-weight:800;font-size:13px}
+.done .opt{cursor:default}
+.opt.right{background:var(--ok-bg);border-color:var(--c-green)}
+.opt.right .ol{background:var(--c-green);color:var(--card)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--c-red)}
+.opt.wrong .ol{background:var(--c-red);color:var(--card)}
+.why{font-size:16px;background:var(--paper);border-radius:10px;padding:10px 14px}
+.qresult{border-radius:14px;padding:16px;background:var(--paper);display:grid;gap:10px}
+.grade{font-family:var(--font-display);font-size:30px;font-weight:700;color:var(--yc)}
+.pager{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pager a{text-decoration:none;font-weight:800;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;max-width:100%}
+/* veze */
+.navl{font-weight:800;text-decoration:none;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink);background:var(--paper)}
+.navl:hover{border-color:var(--ink)}
+.mapcta{display:grid;gap:2px;text-decoration:none;color:var(--ink);background:var(--card);border:2px dashed var(--line);border-radius:16px;padding:14px 18px;margin:-18px 0 34px}
+.mapcta b{font-family:var(--font-display);font-size:17px}
+.mapcta span{color:var(--muted)}
+.mapcta:hover{border-color:var(--ink)}
+.links{border-style:dashed}
+.lk{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr));gap:8px}
+.lkc{display:flex;gap:10px;align-items:flex-start;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--paper);min-width:0}
+.lkc:hover{border-color:var(--yc)}
+.lkc b{display:block;font-size:15px;line-height:1.3}
+.lkc small{display:block;color:var(--muted);font-size:13.5px;line-height:1.4;margin-top:2px}
+.lkn{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:var(--yc);color:var(--card);font-weight:800;font-size:13px;font-family:var(--font-display)}
+.nitl{list-style:none;padding:0!important}
+.nitl li{background:var(--paper);border-radius:10px;padding:8px 12px;font-size:15px}
+.map-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:760px){.map-wrap{grid-template-columns:minmax(0,1fr)}}
+.map-box{overflow-x:auto}
+.map-panel{display:grid;gap:10px;align-content:start;min-width:0}
+svg.map{width:100%;height:auto;display:block;min-width:300px}
+.map .colh{fill:var(--muted);font:800 12px var(--font-body);text-anchor:middle}
+.map .e{fill:none;stroke:var(--line);stroke-width:1.5}
+.map .e.in{stroke:var(--c-orange);stroke-width:3}
+.map .e.out{stroke:var(--c-green);stroke-width:3}
+.map .e.dim{opacity:.22}
+.map .th{fill:none;stroke:var(--ink);stroke-width:3.5;stroke-dasharray:7 5;stroke-linejoin:round}
+.map .nd{cursor:pointer;outline:none}
+.map .nd circle{fill:var(--card);stroke:var(--yc);stroke-width:2.5}
+.map .nd text{fill:var(--ink);font:800 12px var(--font-body);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.map .nd:hover circle,.map .nd:focus-visible circle{stroke-width:4}
+.map .nd.on circle{fill:var(--yc)}
+.map .nd.on text{fill:var(--card)}
+.map .nd.dim{opacity:.3}
+.lk-h{font-family:var(--font-body);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;margin-top:4px}
+.lk-h.in,.key.in{color:var(--c-orange);font-weight:800}
+.lk-h.out,.key.out{color:var(--c-green);font-weight:800}
+.nit{border-top:1px solid var(--line);padding-top:14px;display:grid;gap:8px}
+.nit-h{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fl{display:inline-flex;gap:6px;align-items:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 10px 3px 3px;font-size:14px;font-weight:700;max-width:100%}
+.fl .lkn{width:24px;height:24px;font-size:11px;border-radius:999px}
+.fl:hover{border-color:var(--yc)}
+.arr{color:var(--muted);font-weight:800}
+.tagl{font-size:13px;font-weight:700;text-decoration:none;color:var(--ink);border-left:4px solid var(--yc);background:var(--card);padding:2px 8px;border-radius:4px}
+.sitefoot{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:13.5px;line-height:1.55;max-width:75ch}
+.sitefoot a{font-weight:700}
+.sitefoot p{margin:0 0 8px}
+.sf-row{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center}
+.linkbtn{border:0;background:none;padding:0;color:var(--c-blue);font-weight:700;text-decoration:underline;cursor:pointer;font-size:inherit}
+.rules{display:grid;gap:10px}
+.rule{border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.rule[open]{border-color:var(--c-blue)}
+.rule summary{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;cursor:pointer;list-style:none}
+.rule summary::-webkit-details-marker{display:none}
+.rule summary::after{content:"+";margin-left:auto;font-weight:800;font-size:20px;line-height:1;color:var(--muted)}
+.rule[open] summary::after{content:"−"}
+.rule summary b{display:block;font-size:17px}
+.rule summary small{display:block;color:var(--muted);font-size:15px;line-height:1.4}
+.rn{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--c-blue);color:var(--card);font-weight:800;font-family:var(--font-display);font-size:14px}
+.rule-b{padding:0 14px 14px 56px;display:grid;gap:8px}
+.ok{color:var(--c-green);font-weight:700}
+.yn{list-style:none;padding:0!important;display:grid;gap:6px}
+.yn li{padding:6px 10px 6px 34px;border-radius:8px;position:relative}
+.yn li::before{position:absolute;left:10px;font-weight:800}
+.yn .y{background:var(--ok-bg)}.yn .y::before{content:"✓";color:var(--c-green)}
+.yn .n{background:var(--bad-bg)}.yn .n::before{content:"✕";color:var(--c-red)}
+.addr{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--paper);border-radius:12px;padding:10px 12px}
+.addr code{font-size:14px;overflow-wrap:anywhere;min-width:0;flex:1 1 220px;user-select:all}
+.dlg{border:1px solid var(--line);border-radius:18px;padding:20px;max-width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:auto;background:var(--card);color:var(--ink);display:none;gap:12px}
+.dlg[open]{display:grid}
+.dlg::backdrop{background:rgba(10,20,30,.5)}
+.dlg-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.dlg-x{border:1px solid var(--line);background:var(--paper);border-radius:10px;width:36px;height:36px;cursor:pointer;font-size:16px}
+@media (max-width:520px){.rule-b{padding-left:14px}}
+footer{color:var(--muted);font-size:14px;margin-top:30px;max-width:70ch}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.ctl input{height:30px;cursor:pointer}
+@media (max-width:520px){
+  body{font-size:16px} .pg{padding:18px 14px;border-radius:14px} .fcard .big{font-size:19px}
+  header.top{position:static}
+  .top-in{gap:8px;padding-block:8px}
+  .brand{font-size:15px}.brand i{width:26px;height:26px}
+  .seg button{padding:6px 10px}
+  main{padding-block:18px 60px}
+  .lesson{gap:16px}
+  .jump{gap:6px}
+  .sim-ctrl{gap:8px 14px}
+  .ctl{flex-basis:100%}
+  .pager{flex-direction:column}
+  .pager a{text-align:center}
+  .qt{font-size:17px}
+}
+@media (pointer:coarse){
+  .ctl input{height:40px}
+  .btn,.btn-sim,.opt,.jump button,.seg button,.navl,button.chip,.linkbtn{min-height:44px}
+  .btn,.btn-sim,.jump button,.navl{display:inline-flex;align-items:center;justify-content:center}
+  .opt{padding:12px}
+  .lkc,.fl{min-height:44px}
+}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+
+<header class="top"><div class="top-in">
+  <a class="brand" href="#"><i>F</i>Fizika bez straha</a>
+  <a class="navl" href="#mapa">Mapa veza</a>
+  <span class="sp"></span>
+  <div class="seg nolatgroup" role="group" aria-label="Pismo" id="scriptSeg">
+    <button type="button" data-m="lat">Latinica</button><button type="button" data-m="cyr">Ćirilica</button>
+  </div>
+</div></header>
+<main id="app"></main>
+
+<script src="config.js"></script>
+<script src="sims.js"></script>
+<script src="g1.js"></script>
+<script src="g2.js"></script>
+<script src="g3.js"></script>
+<script src="g4.js"></script>
+<script src="veze.js"></script>
+<script>
+(function(){
+const LS=(window.LESSONS||[]).slice().sort((a,b)=>a.n-b.n);
+const TOTAL=LS.length;
+const app=document.getElementById('app');
+let mode='lat'; try{mode=localStorage.getItem('fiz-pismo')||'lat'}catch(e){}
+let prog={}; try{prog=JSON.parse(localStorage.getItem('fiz-prog')||'{}')||{}}catch(e){prog={}}
+const save=()=>{try{localStorage.setItem('fiz-prog',JSON.stringify(prog))}catch(e){}};
+
+/* ---------- latinica -> ćirilica ---------- */
+const DG=[['LJ','Љ'],['Lj','Љ'],['lj','љ'],['NJ','Њ'],['Nj','Њ'],['nj','њ'],['DŽ','Џ'],['Dž','Џ'],['dž','џ']];
+const MP={A:'А',B:'Б',V:'В',G:'Г',D:'Д',Đ:'Ђ',E:'Е',Ž:'Ж',Z:'З',I:'И',J:'Ј',K:'К',L:'Л',M:'М',N:'Н',O:'О',P:'П',R:'Р',S:'С',T:'Т',Ć:'Ћ',U:'У',F:'Ф',H:'Х',C:'Ц',Č:'Ч',Š:'Ш'};
+Object.keys(MP).forEach(k=>{MP[k.toLowerCase()]=MP[k].toLowerCase()});
+function cyr(s){DG.forEach(([a,b])=>{s=s.split(a).join(b)});return s.replace(/[A-Za-zĐđŽžĆćČčŠš]/g,c=>MP[c]||c)}
+window.TR=s=>mode==='cyr'?cyr(String(s)):String(s);
+function walk(root){
+  if(mode!=='cyr'||!root)return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>(n.parentElement&&n.parentElement.closest('.f,script,style,canvas,output,.nolat'))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  const a=[];while(w.nextNode())a.push(w.currentNode);a.forEach(n=>{n.nodeValue=cyr(n.nodeValue)});
+}
+window.WALK=walk;
+const fmt=s=>String(s).replace(/\$([^$]+)\$/g,(m,x)=>'<span class="f">'+x.replace(/_([A-Za-z0-9]+)/g,'<sub>$1</sub>')+'</span>');
+
+const YEARS={1:{n:'1. razred',t:'Mehanika: merenje, kretanje, sile, energija i fluidi'},2:{n:'2. razred',t:'Toplota, gasovi i elektricitet'},3:{n:'3. razred',t:'Magnetizam, oscilacije, talasi i svetlost'},4:{n:'4. razred',t:'Talasna optika, relativnost, kvantna, atomska i nuklearna fizika, svemir'}};
+const week=n=>Math.ceil(n/2);
+const passed=n=>prog[n]&&prog[n].best>=4;
+
+let destroySim=null;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function home(){
+  const done=LS.filter(l=>passed(l.n)).length;
+  const next=LS.find(l=>!passed(l.n))||LS[0];
+  let h=`<section class="hero">
+    <h1>Fizika bez straha</h1>
+    <p class="lead">Kurs fizike za gimnaziju, od 1. do 4. razreda, objašnjen jednostavno, korak po korak. Svaka lekcija ima kratku priču, objašnjenje bez komplikovanja, animaciju koju sama pomeraš, formulu „prevedenu“ na običan jezik, rešen zadatak i kontrolni test.</p>
+    <div class="stats"><span class="chip">${TOTAL} lekcija</span><span class="chip">4 razreda</span><span class="chip">2 lekcije nedeljno · ${Math.ceil(TOTAL/2)} nedelja</span><span class="chip">Položeno: ${done} / ${TOTAL}</span></div>
+    <div class="bar" aria-hidden="true"><span style="width:${Math.round(done/TOTAL*100)}%"></span></div>
+    <a class="cta" href="#l${next.n}">${done?'Nastavi':'Počni'}: lekcija ${next.n} · ${next.t} →</a>
+  </section>
+  <section class="howto"><h3>Kako da učiš sa ovim kursom</h3>
+  <ol><li>Dve lekcije nedeljno, oko 40 minuta po lekciji. Bolje malo i redovno nego sve odjednom.</li>
+  <li>Prvo pročitaj priču i objašnjenje. Zatim se igraj animacijom dok ne vidiš šta se dešava kad nešto promeniš.</li>
+  <li>Prepiši formule i njihovo objašnjenje u svesku. Rečenica je važnija od slova.</li>
+  <li>Uradi test. Položeno je kad imaš bar 4 od 6 tačnih. Ako ne uspe, vrati se na deo koji je bio težak i pokušaj ponovo.</li>
+  <li>Ako ideš u 2, 3. ili 4. razred, kreni od svog razreda. Kad nešto ne razumeš, vrati se na lekciju iz ranijeg razreda. Svaka lekcija ti kaže na koje ranije lekcije se oslanja.</li></ol></section>
+  <a class="mapcta" href="#mapa"><b>Mapa veza →</b><span>Kako se 40 lekcija povezuju jedna sa drugom: interaktivna mapa, niti kroz kurs i ideje koje se stalno vraćaju.</span></a>`;
+  [1,2,3,4].forEach(y=>{
+    const ls=LS.filter(l=>l.y===y);
+    h+=`<section class="year y${y}"><div class="year-h"><h2>${YEARS[y].n}</h2><p>${YEARS[y].t}</p></div><div class="cards">`;
+    ls.forEach(l=>{
+      const p=prog[l.n];
+      const st=p?(p.best>=4?`<span class="tag ok">Položeno ${p.best}/6</span>`:`<span class="tag mid">Test: ${p.best}/6</span>`):'<span class="tag">Nova</span>';
+      h+=`<a class="lcard" href="#l${l.n}"><span class="lnum">${l.n}</span><b>${l.t}</b><small>${fmt(l.s)}</small><span class="lmeta"><span class="tag">Nedelja ${week(l.n)}</span>${st}</span></a>`;
+    });
+    h+='</div></section>';
+  });
+  h+=`<footer>Sadržaj prati zvanični program fizike za gimnazije u Srbiji (opšti i prirodno-matematički smer), koji prate i svi udžbenici. Kurs nije povezan ni sa jednim izdavačem. Redosled tema u udžbeniku može biti malo drugačiji. Za pripremu kontrolnog uvek proveri i šta je nastavnik zadao. Napredak se čuva samo u ovom pregledaču.</footer>`;
+  app.innerHTML=h;
+}
+
+function lesson(l){
+  const y=l.y, i=LS.indexOf(l), prev=LS[i-1], next=LS[i+1];
+  let h=`<article class="lesson y${y}">
+  <div class="lhead"><nav class="crumb"><a href="#">← Sve lekcije</a><span>${YEARS[y].n} · Lekcija ${l.n} od ${TOTAL} · Nedelja ${week(l.n)}</span></nav>
+  <h1>${l.t}</h1><p class="lead">${fmt(l.s)}</p>
+  <div class="jump" aria-label="Delovi lekcije">
+   <button type="button" data-go="sec-lab">Animacija</button><button type="button" data-go="sec-f">Formule</button><button type="button" data-go="sec-ex">Zadatak</button><button type="button" data-go="sec-quiz">Test</button><button type="button" data-go="sec-veze">Veze</button></div></div>
+  ${preBox(l)}
+  <section class="pg hook"><p class="eyebrow">Priča za početak</p><p>${fmt(l.hook)}</p></section>`;
+  l.parts.forEach(p=>{h+=`<section class="pg"><h2>${p[0]}</h2>${fmt(p[1])}</section>`});
+  h+=`<section class="pg lab" id="sec-lab"><p class="eyebrow">Isprobaj sama</p><h2>${l.simT||'Animacija'}</h2><p class="hint">${fmt(l.simNote)}</p><div id="simhost"></div></section>
+  <section class="pg" id="sec-f"><p class="eyebrow">Formula na ljudskom jeziku</p><div class="fgrid">${l.f.map(f=>`<div class="fcard"><div class="big">${fmt(f[0])}</div><p>${fmt(f[1])}</p></div>`).join('')}</div></section>
+  <section class="pg" id="sec-ex"><p class="eyebrow">Rešimo zajedno</p><p class="task">${fmt(l.ex.q)}</p>
+   <ol class="ex-steps">${l.ex.s.map((s,k)=>`<li${k?' hidden':''}>${fmt(s)}</li>`).join('')}</ol>
+   <button type="button" class="btn" id="exNext">Prikaži sledeći korak</button>
+   <p class="ex-ans" hidden>${fmt(l.ex.a)}</p></section>
+  <section class="pg mem"><p class="eyebrow">Zapamti</p><ul>${l.mem.map(m=>`<li>${fmt(m)}</li>`).join('')}</ul></section>
+  <section class="pg vid"><p class="eyebrow">Još jedno objašnjenje</p><p>Ako ti nešto i dalje nije jasno, pogledaj kratak video na ovu temu. Link otvara pretragu sa gotovim pojmom: <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(l.yt)}" target="_blank" rel="noopener">potraži video „${l.yt}“</a></p></section>
+  <section class="pg quiz" id="sec-quiz"><p class="eyebrow">Kontrolni test</p><h2>Proveri šta znaš</h2><p class="hint">6 pitanja. Posle svakog odgovora dobijaš objašnjenje. Za prolaz su potrebna bar 4 tačna.</p><div id="quizhost"></div></section>
+  ${postBox(l)}
+  <nav class="pager">${prev?`<a href="#l${prev.n}">← ${prev.n}. ${prev.t}</a>`:'<span></span>'}${next?`<a href="#l${next.n}">${next.n}. ${next.t} →</a>`:'<a href="#">Kraj kursa: nazad na sve lekcije</a>'}</nav>
+  </article>`;
+  app.innerHTML=h;
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.go).scrollIntoView({behavior:'smooth',block:'start'}));
+  const steps=[...app.querySelectorAll('.ex-steps li')], nb=document.getElementById('exNext'), ans=app.querySelector('.ex-ans');
+  nb.onclick=()=>{const hid=steps.find(s=>s.hidden); if(hid){hid.hidden=false} if(!steps.some(s=>s.hidden)){ans.hidden=false;nb.hidden=true}};
+  const tm=document.getElementById('toMap'); if(tm) tm.onclick=()=>{mapSel=l.n;mapNit=null;location.hash='mapa'};
+  if(window.SIMS&&SIMS[l.sim]) destroySim=SIMS[l.sim](document.getElementById('simhost'));
+  quiz(document.getElementById('quizhost'),l);
+}
+
+/* ---------- veze između lekcija ---------- */
+let mapSel=null,mapNit=null;
+const V=()=>window.VEZE||{pre:{},niti:[],obrasci:[]};
+const byN=n=>LS.find(x=>x.n===n);
+function post(n){const out=[];Object.entries(V().pre).forEach(([t,arr])=>arr.forEach(([p,r])=>{if(p===n)out.push([+t,r])}));return out.sort((a,b)=>a[0]-b[0])}
+function chip(n,r){const l=byN(n);if(!l)return'';return`<a class="lkc y${l.y}" href="#l${n}"><span class="lkn">${n}</span><span><b>${l.t}</b>${r?`<small>${fmt(r)}</small>`:''}</span></a>`}
+function preBox(l){const pre=V().pre[l.n]||[];
+  return`<section class="pg links"><p class="eyebrow">Pre nego što počneš</p>${pre.length?`<p class="hint">Ova lekcija se oslanja na ono što si već naučila. Ako ti nešto od ovoga nije jasno, prvo se vrati na:</p><div class="lk">${pre.map(([p,r])=>chip(p,r)).join('')}</div>`:'<p class="hint">Ovo je prva lekcija i ne treba ti nikakvo predznanje.</p>'}</section>`}
+function postBox(l){const po=post(l.n),niti=V().niti.filter(x=>x.l.includes(l.n));
+  return`<section class="pg links" id="sec-veze"><p class="eyebrow">Gde se ovo koristi dalje</p>${po.length?`<p class="hint">Ono što si naučila u ovoj lekciji trebaće ti u:</p><div class="lk">${po.map(([t,r])=>chip(t,r)).join('')}</div>`:`<p class="hint">${l.n===LS[LS.length-1].n?'Ovo je završna lekcija kursa. Ona sakuplja znanje iz mnogo ranijih lekcija.':'Nijedna kasnija lekcija se ne nadovezuje direktno na ovu. Ona zaokružuje svoju temu, a njene ideje ćeš i dalje sretati kroz niti ispod.'}</p>`}
+  ${niti.length?`<p class="hint">Lekcija je deo ${niti.length>1?'ovih niti':'ove niti'} (tokova kroz kurs):</p><ul class="nitl">${niti.map(nt=>{const i=nt.l.indexOf(l.n),pv=nt.l[i-1],nx=nt.l[i+1];return`<li><b>${nt.t}</b>, korak ${i+1} od ${nt.l.length}: ${pv?`<a href="#l${pv}">← ${pv}. ${byN(pv).t}</a>`:'početak niti'} · ${nx?`<a href="#l${nx}">${nx}. ${byN(nx).t} →</a>`:'kraj niti'}</li>`}).join('')}</ul>`:''}
+  <button type="button" class="btn" id="toMap">Pogledaj ovu lekciju na mapi veza</button></section>`}
+function mapSvg(){
+  const colW=110,rowH=46,top=54,pos={};
+  [1,2,3,4].forEach((y,ci)=>LS.filter(l=>l.y===y).forEach((l,i)=>{pos[l.n]=[55+ci*colW,top+i*rowH]}));
+  const rows=Math.max(...[1,2,3,4].map(y=>LS.filter(l=>l.y===y).length)),Hh=top+(rows-1)*rowH+30;
+  let s=`<svg class="map" viewBox="0 0 440 ${Hh}" role="group" aria-label="Mapa veza između lekcija">`;
+  [1,2,3,4].forEach((y,ci)=>{s+=`<text class="colh" x="${55+ci*colW}" y="22">${y}. razred</text>`});
+  const rel=new Set();
+  Object.entries(V().pre).forEach(([ts,arr])=>arr.forEach(([p])=>{const t=+ts,a=pos[p],b=pos[t];if(!a||!b)return;let d;
+    if(Math.abs(a[0]-b[0])<1){const off=22+Math.abs(b[1]-a[1])*.16;d=`M${a[0]+15},${a[1]} C${a[0]+15+off},${a[1]} ${b[0]+15+off},${b[1]} ${b[0]+15},${b[1]}`}
+    else{const mx=(a[0]+b[0])/2;d=`M${a[0]+15},${a[1]} C${mx},${a[1]} ${mx},${b[1]} ${b[0]-15},${b[1]}`}
+    let c='e';if(mapSel){if(t===mapSel){c+=' in';rel.add(p)}else if(p===mapSel){c+=' out';rel.add(t)}else c+=' dim'}else if(mapNit)c+=' dim';
+    s+=`<path class="${c}" d="${d}"/>`}));
+  if(mapNit){const nt=V().niti.find(x=>x.id===mapNit);if(nt){s+=`<polyline class="th" points="${nt.l.map(n=>pos[n].join(',')).join(' ')}"/>`;nt.l.forEach(n=>rel.add(n))}}
+  LS.forEach(l=>{const[x,y]=pos[l.n];let c='nd y'+l.y;if(mapSel===l.n)c+=' on';else if((mapSel||mapNit)&&!rel.has(l.n))c+=' dim';
+    s+=`<g class="${c}" data-n="${l.n}" tabindex="0" role="button" aria-label="Lekcija ${l.n}: ${l.t}"><title>${l.n}. ${l.t}</title><circle cx="${x}" cy="${y}" r="15"/><text x="${x}" y="${y}">${l.n}</text></g>`});
+  return s+'</svg>';
+}
+function mapPanel(){
+  if(mapNit){const nt=V().niti.find(x=>x.id===mapNit);
+    return`<p class="eyebrow">Nit kroz kurs</p><h3>${nt.t}</h3><p>${fmt(nt.d)}</p><div class="lk">${nt.l.map((n,i)=>chip(n,i?'korak '+(i+1)+' od '+nt.l.length:'početak niti')).join('')}</div>`}
+  if(!mapSel)return'<p class="hint">Klikni na broj lekcije na mapi.</p>';
+  const l=byN(mapSel),pre=V().pre[mapSel]||[],po=post(mapSel),niti=V().niti.filter(x=>x.l.includes(mapSel));
+  return`<p class="eyebrow">Lekcija ${l.n} · ${l.y}. razred</p><h3>${l.t}</h3><a class="btn" href="#l${l.n}">Otvori lekciju →</a>
+  <p class="lk-h in">Oslanja se na</p>${pre.length?`<div class="lk">${pre.map(([p,r])=>chip(p,r)).join('')}</div>`:'<p class="hint">Ni na šta, ovo je početak kursa.</p>'}
+  <p class="lk-h out">Vodi ka</p>${po.length?`<div class="lk">${po.map(([t,r])=>chip(t,r)).join('')}</div>`:`<p class="hint">${mapSel===LS[LS.length-1].n?'Završna lekcija kursa.':'Nijedna kasnija lekcija se ne nadovezuje direktno na nju; ona zaokružuje svoju temu.'}</p>`}
+  ${niti.length?`<p class="lk-h">Deo niti</p><div class="stats">${niti.map(x=>`<button type="button" class="chip" data-nit="${x.id}">${x.t}</button>`).join('')}</div>`:''}`;
+}
+function drawMap(){
+  const sv=document.getElementById('mapSvg'),pn=document.getElementById('mapPanel');if(!sv)return;
+  sv.innerHTML=mapSvg();pn.innerHTML=mapPanel();walk(sv);walk(pn);
+  sv.querySelectorAll('.nd').forEach(g=>{const go=()=>{mapSel=+g.dataset.n;mapNit=null;drawMap();const f=document.querySelector(`#mapSvg .nd[data-n="${mapSel}"]`);if(f)f.focus({preventScroll:true})};
+    g.addEventListener('click',go);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+  pn.querySelectorAll('[data-nit]').forEach(b=>b.onclick=()=>{mapNit=b.dataset.nit;mapSel=null;drawMap()});
+}
+function mapPage(){
+  if(!mapSel&&!mapNit)mapSel=(LS.find(l=>!passed(l.n))||LS[0]).n;
+  const niti=V().niti.map(nt=>`<div class="nit"><div class="nit-h"><h3>${nt.t}</h3><button type="button" class="btn" data-nit="${nt.id}">Prikaži na mapi</button></div><p>${fmt(nt.d)}</p><div class="flow">${nt.l.map(n=>{const l=byN(n);return`<a class="fl y${l.y}" href="#l${n}"><span class="lkn">${n}</span>${l.t}</a>`}).join('<span class="arr" aria-hidden="true">→</span>')}</div></div>`).join('');
+  const obr=V().obrasci.map(o=>`<div class="fcard"><h3>${fmt(o.t)}</h3><p>${fmt(o.d)}</p><div class="stats">${o.l.map(n=>`<a class="tagl y${byN(n).y}" href="#l${n}">${n}. ${byN(n).t}</a>`).join('')}</div></div>`).join('');
+  app.innerHTML=`<article class="lesson y1"><div class="lhead"><nav class="crumb"><a href="#">← Sve lekcije</a><span>Dodatak kursu</span></nav>
+  <h1>Mapa veza</h1><p class="lead">Fizika nije spisak odvojenih lekcija. Svaka nova ideja stoji na starim, kao sprat na spratu. Ovde vidiš kako lekcije vode jedna u drugu kroz sva četiri razreda.</p></div>
+  <section class="pg"><p class="eyebrow">Kako čitati mapu</p><ul>
+   <li>Svaki krug je jedna lekcija, a kolone su razredi.</li>
+   <li>Linija između dve lekcije znači da druga koristi nešto iz prve.</li>
+   <li>Kad naiđeš na težak deo u nekoj lekciji, pogledaj na šta se ona oslanja. Problem je često u ranijoj lekciji.</li>
+   <li>Pred kontrolni prođi jednu nit od početka do kraja. Tako vidiš celu priču, a ne samo pojedinačne formule.</li></ul></section>
+  <section class="pg"><p class="eyebrow">Interaktivna mapa</p><h2>Na šta se lekcija oslanja i kuda vodi</h2><p class="hint">Klikni na broj lekcije. <span class="key in">Narandžaste</span> linije dolaze iz lekcija na koje se oslanja, a <span class="key out">zelene</span> idu ka lekcijama koje se na nju nadovezuju.</p>
+   <div class="map-wrap"><div class="map-box" id="mapSvg"></div><div class="map-panel" id="mapPanel" aria-live="polite"></div></div></section>
+  <section class="pg"><p class="eyebrow">Tok procesa</p><h2>Niti kroz kurs</h2><p class="hint">Nit je put kroz kurs koji prati jednu veliku ideju, od lekcije u kojoj se prvi put pojavi do najdalje do koje stigne. Strelice pokazuju redosled kojim se ideja razvija.</p>${niti}</section>
+  <section class="pg"><p class="eyebrow">Ideje koje se vraćaju</p><h2>Veliki obrasci</h2><p class="hint">Neke ideje se ponavljaju u potpuno različitim temama. Kad ih prepoznaš, nova lekcija više nije sasvim nova.</p><div class="fgrid">${obr}</div></section>
+  <nav class="pager"><a href="#">← Sve lekcije</a><a href="#l1">Kreni od lekcije 1 →</a></nav></article>`;
+  drawMap();
+  app.querySelectorAll('.nit [data-nit]').forEach(b=>b.onclick=()=>{mapNit=b.dataset.nit;mapSel=null;drawMap();document.getElementById('mapSvg').scrollIntoView({behavior:'smooth',block:'start'})});
+}
+
+/* ---------- o kursu ---------- */
+const VERSION='0.9 (probna) · novembar 2026';
+const OFFICIAL=String(window.KURS_ADRESA||'').trim()||(/^https?:$/.test(location.protocol)?location.origin+location.pathname:'');
+const RULE=(n,t,short,body)=>`<details class="rule"><summary><span class="rn">${n}</span><span><b>${t}</b><small>${short}</small></span></summary><div class="rule-b">${body}</div></details>`;
+const RULES=`<div class="rules">
+${RULE(1,'Navedi odakle je','Ako preuzmeš nešto što je napravljeno baš za ovaj kurs, napiši da je iz kursa „Fizika bez straha“.',`
+ <p><b>Fizika pripada svima.</b> Omov zakon, formule, definicije i istorijske činjenice znaju i objašnjavaju svi nastavnici i udžbenici, i nisu „vlasništvo“ ovog kursa. Njih slobodno koristi i objašnjavaj na svoj način, bez ikakvog navođenja.</p>
+ <p>Pravilo važi samo za ono što je <b>ovde napravljeno</b>: tekstove lekcija kako su napisani, priče sa početka lekcija, rešene zadatke, pitanja iz testova, animacije i mapu veza.</p>
+ <ul class="yn"><li class="y">Učenica u grupi drugara podeli pitanja iz testa i napiše „iz kursa Fizika bez straha“.</li><li class="y">Nastavnik na času pokaže animaciju iz kursa i kaže odakle je.</li><li class="y">Profesor sam objasni Omov zakon na času. Ništa ne navodi, jer je to opšte znanje.</li></ul>
+ <p><b>Zašto:</b> ko vidi preuzeti deo, zna gde je ceo kurs i gde je najnovija, ispravljena verzija. Ako je neko nešto menjao, dopiše „uz izmene“, pa se njegove eventualne greške ne pripisuju kursu.</p>
+ <p class="ok">Ne moraš da navodiš ničije ime, ne treba ti dozvola i nikome ne moraš da se javljaš.</p>`)}
+${RULE(2,'Ne naplaćuj','Kurs i sve što od njega napraviš mora da ostane besplatno.',`
+ <ul class="yn"><li class="y">Škola ga koristi na času.</li><li class="y">Roditelj ga šalje deci, a nastavnik učenicima.</li><li class="y">Učenici ga dele među sobom, preko linka ili USB-a.</li>
+ <li class="n">Neko traži novac za pristup kursu („pristup 500 dinara“).</li><li class="n">Neko prodaje kurs na USB-u ili u štampanom obliku.</li><li class="n">Privatni časovi koji se plaćaju, a kurs se koristi kao deo plaćenog časa. To se računa kao zarada.</li></ul>`)}
+${RULE(3,'Ako menjaš, deli pod istim pravilima','Ko prepravi kurs i da ga dalje, i prepravku mora da da slobodno.',`
+ <p><b>Primer:</b> nastavnik doda pet svojih lekcija iz astronomije i podeli ceo kurs dalje. Njegove nove lekcije tada moraju da budu slobodne kao i ostatak kursa: besplatne, uz navođenje izvora, sa istim pravilima. Ne sme da napiše „moje lekcije ne smete da kopirate“.</p>
+ <p><b>Zašto:</b> tako kurs i sve njegove dorade zauvek ostaju slobodni za svu decu.</p>
+ <p class="ok">Ovo pravilo važi samo za prerade. Ko kurs deli nepromenjen, ne mora ništa da radi.</p>`)}
+</div>`;
+function openRules(){
+  let d=document.getElementById('rulesDlg');
+  if(!d){d=document.createElement('dialog');d.id='rulesDlg';d.className='dlg';document.body.appendChild(d)}
+  d.innerHTML=`<div class="dlg-h"><h2>Pravila deljenja</h2><button type="button" class="dlg-x" aria-label="Zatvori">✕</button></div><p>Kurs smeš slobodno da deliš i menjaš. Važe samo tri pravila. Klikni na pravilo da vidiš primere.</p>${RULES}<div class="note"><b>Ako samo prosleđuješ link</b> ili kopiraš kurs bez izmena, sva tri pravila su već ispunjena.</div><div class="stats"><a class="btn" href="#o-kursu">Sve o kursu</a><button type="button" class="btn solid dlg-ok">Razumem</button></div>`;
+  walk(d);
+  d.querySelectorAll('.dlg-x,.dlg-ok').forEach(b=>b.onclick=()=>d.close());
+  d.querySelector('a').addEventListener('click',()=>d.close());
+  d.addEventListener('click',e=>{if(e.target===d)d.close()});
+  if(d.showModal)d.showModal();else d.setAttribute('open','');
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-rules]');if(b)openRules()});
+function aboutPage(){
+  app.innerHTML=`<article class="lesson y1"><div class="lhead"><nav class="crumb"><a href="#">← Sve lekcije</a><span>O kursu</span></nav>
+  <h1>O kursu</h1><p class="lead">Šta je ovaj kurs, ko sme da ga koristi i šta treba da znaš pre nego što učiš iz njega.</p></div>
+  <section class="pg"><p class="eyebrow">Namena</p><h2>Besplatan i nekomercijalan</h2>
+   <p>„Fizika bez straha“ je besplatan obrazovni materijal za učenike gimnazije. Napravljen je da pomogne deci kojoj fizika ne ide lako da razumeju osnove i pripreme se za časove i kontrolne zadatke. Kurs se ne prodaje i ne sme da se naplaćuje. Slobodno ga može koristiti i deliti svako ko je zainteresovan.</p></section>
+  <section class="pg"><p class="eyebrow">Status</p><h2>Probna verzija</h2>
+   <p>Kurs je u <b>fazi testiranja</b>. U prvoj fazi korišćenja isprobavaju ga učenici, a sadržaj i rad kursa mogu da pregledaju profesori fizike i informatike. Na osnovu njihovih primedbi kurs će se ispravljati i dopunjavati, pa se lekcije i testovi mogu menjati.</p></section>
+  <section class="pg"><p class="eyebrow">Važno</p><h2>Odricanje odgovornosti</h2><ul>
+   <li><b>Ovo nije zvanični udžbenik.</b> Kurs prati javno dostupan program nastave fizike za gimnazije u Srbiji, ali nije odobren od Ministarstva prosvete i nije povezan ni sa jednim izdavačem udžbenika.</li>
+   <li><b>Kurs je pripremljen uz pomoć veštačke inteligencije.</b> Tekstovi, zadaci, testovi i animacije su pažljivo pravljeni, ali mogu da sadrže greške ili pojednostavljenja. Kurs ne zamenjuje nastavu, udžbenik ni nastavnika. Kad nešto nije jasno ili se razlikuje od onoga što ste radili u školi, važi ono što kaže nastavnik.</li>
+   <li><b>Pojednostavljenja su namerna.</b> Animacije nisu u razmeri (na primer, atom i planine su prikazani tako da se bolje vide), a neke pojave su objašnjene jednostavnije nego u stručnoj literaturi.</li>
+   <li><b>Spoljni linkovi.</b> Linkovi „potraži video“ otvaraju pretragu na YouTube-u. Za sadržaj drugih sajtova autor kursa ne odgovara. Mlađim učenicima preporučujemo da videe biraju uz roditelja.</li>
+   <li><b>Bez obaveza i prava.</b> Kurs se daje „takav kakav jeste“, bez ikakve garancije. Korišćenjem kursa ne nastaju nikakve obaveze ni prava, ni za korisnika ni za autora, ni tokom ni nakon korišćenja. Autor ne odgovara za eventualnu štetu nastalu korišćenjem kursa, uključujući i ocene u školi.</li></ul></section>
+  <section class="pg"><p class="eyebrow">Privatnost</p><h2>Ne prikupljamo podatke</h2>
+   <p>Kurs ne traži prijavu, ne prikazuje reklame i ne prati korisnike. Napredak (rezultati testova) i izbor pisma čuvaju se samo u pregledaču na tvom uređaju i niko drugi ih ne vidi. Brisanjem podataka pregledača brišeš i napredak. Kurs ne učitava ništa sa drugih servisa: slova i animacije su deo samog kursa. Stranicu isporučuje servis GitHub Pages, koji kao i svaki server beleži uobičajene tehničke podatke, kao što je IP adresa.</p></section>
+  <section class="pg" id="sec-licenca"><p class="eyebrow">Licenca</p><h2>Kurs smeš slobodno da deliš</h2>
+   <p>Kurs možeš da pošalješ drugarima, roditeljima, nastavnicima i školama. Možeš i da ga menjaš i dopunjuješ. Ne treba ti ničija dozvola i nikome ne moraš da se javljaš. Postoje samo <b>tri pravila</b>. Klikni na pravilo da vidiš primere.</p>
+   ${RULES}
+   <div class="note"><b>Ako samo prosleđuješ link</b> ili kopiraš kurs bez izmena, sva tri pravila su već ispunjena. Ne moraš ništa posebno da radiš.</div>
+   <p class="hint">Pravni naziv licence je <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license"><span class="f">Creative Commons BY-NC-SA 4.0</span></a>. Fizički zakoni, formule i istorijske činjenice pripadaju svima. Slova koja kurs koristi (Unbounded, Nunito, JetBrains Mono) imaju sopstvenu slobodnu licencu SIL Open Font License.</p></section>
+  <section class="pg"><p class="eyebrow">Deljenje</p><h2>Kako da deliš kurs</h2>
+   <p>Zvanična adresa kursa je uvek ista, a na njoj je uvek najnovija, ispravljena verzija:</p>
+   ${OFFICIAL?`<div class="addr"><code class="f" id="officialUrl">${OFFICIAL}</code><button type="button" class="btn" id="copyUrl">Kopiraj adresu</button></div>`:'<p class="note">Ovu kopiju otvaraš sa uređaja, a zvanična adresa u njoj nije upisana. Pitaj osobu od koje si dobio/la kurs za link.</p>'}
+   <ul><li><b>Šalji pun link</b>, bez skraćivača adresa. Ako dobiješ link koji se razlikuje od adrese iznad, ne otvaraj ga.</li>
+   <li><b>Dodaj kurs na početni ekran telefona</b> i otvaraj ga kao aplikaciju. Na Androidu (Chrome): meni ⋮ → „Dodaj na početni ekran“ ili „Instaliraj aplikaciju“. Na iPhone-u (Safari): dugme za deljenje → „Dodaj na početni ekran“. Kad ga jednom otvoriš, kurs radi i bez interneta.</li>
+   <li><b>Otvori kurs u običnom pregledaču</b> (Chrome, Safari, Firefox), a ne u pregledaču unutar aplikacije za poruke. Samo tako će se pamtiti tvoj napredak u testovima.</li>
+   <li><b>Kopija na USB-u</b> radi i bez interneta, ali se sama ne ažurira. Uporedi oznaku verzije na dnu stranice sa onom na zvaničnoj adresi.</li></ul></section>
+  <section class="pg"><p class="eyebrow">Greške i predlozi</p><h2>Pronašao/la si grešku?</h2>
+   <p>Ako primetiš grešku u objašnjenju, zadatku ili testu, javi osobi od koje si dobio/la kurs ili svom nastavniku fizike.</p></section>
+  <nav class="pager"><a href="#">← Sve lekcije</a><a href="#mapa">Mapa veza →</a></nav></article>`;
+}
+const SITEFOOT=`<div class="sitefoot"><p><b>Probna verzija, u fazi testiranja.</b> Besplatan, nekomercijalan obrazovni materijal, slobodan za deljenje. Nije zvanični udžbenik i nije povezan sa izdavačima udžbenika. Pripremljen uz pomoć veštačke inteligencije, pa može da sadrži greške: proveri sa nastavnikom. Korišćenjem ne nastaju nikakve obaveze ni prava.</p>
+<p class="sf-row"><span>Verzija ${VERSION}</span><span class="f">CC BY-NC-SA 4.0</span><button type="button" class="linkbtn" data-rules>Pravila deljenja</button><a href="#o-kursu">O kursu i privatnost</a></p></div>`;
+
+function quiz(host,l){
+  const qs=shuffle(l.quiz.map(q=>{const idx=shuffle([...q[1].keys()]);return{q:q[0],o:idx.map(k=>q[1][k]),c:idx.indexOf(q[2]),w:q[3]}}));
+  let answered=0,score=0;
+  host.innerHTML=qs.map((q,i)=>`<div class="qcard" data-i="${i}"><p class="qn">Pitanje ${i+1} od ${qs.length}</p><p class="qt">${fmt(q.q)}</p><div class="opts">${q.o.map((o,j)=>`<button type="button" class="opt" data-j="${j}"><span class="ol nolat">${'ABCD'[j]}</span><span>${fmt(o)}</span></button>`).join('')}</div><p class="why" hidden></p></div>`).join('')+'<div class="qresult" hidden></div>';
+  host.querySelectorAll('.qcard').forEach(card=>{
+    const q=qs[+card.dataset.i];
+    card.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      if(card.classList.contains('done'))return;
+      card.classList.add('done');
+      const ok=+b.dataset.j===q.c; if(ok)score++; answered++;
+      b.classList.add(ok?'right':'wrong'); card.querySelectorAll('.opt')[q.c].classList.add('right');
+      const w=card.querySelector('.why'); w.innerHTML=(ok?'<b>Tačno!</b> ':'<b>Nije tačno.</b> ')+fmt(q.w); w.hidden=false; walk(w);
+      if(answered===qs.length)finish();
+    });
+  });
+  function finish(){
+    const g=[1,1,1,2,3,4,5][score], gn={1:'nedovoljan',2:'dovoljan',3:'dobar',4:'vrlo dobar',5:'odličan'}[g];
+    const msg=score>=5?'Odlično! Ovu lekciju si savladala.':score>=4?'Položeno! Pogledaj još jednom pitanja na kojima si pogrešila.':'Još malo vežbe. Vrati se na animaciju i rešen zadatak, pa pokušaj ponovo. Pitanja će biti izmešana.';
+    const p=prog[l.n]||{best:0,tries:0}; p.tries++; p.best=Math.max(p.best,score); prog[l.n]=p; save();
+    const r=host.querySelector('.qresult'); const nx=LS[LS.indexOf(l)+1];
+    r.innerHTML=`<p>Rezultat: <b>${score} / ${qs.length}</b></p><p class="grade">Ocena ${g} (${gn})</p><p>${msg}</p><div class="stats"><button type="button" class="btn" id="qAgain">Uradi test ponovo</button>${nx?`<a class="cta" href="#l${nx.n}">Sledeća lekcija →</a>`:''}</div>`;
+    r.hidden=false; walk(r);
+    r.querySelector('#qAgain').onclick=()=>{quiz(host,l);walk(host);host.scrollIntoView({behavior:'smooth'})};
+  }
+}
+
+function route(){
+  if(destroySim){try{destroySim()}catch(e){} destroySim=null}
+  const h=location.hash;
+  const m=h.match(/^#l(\d+)$/);
+  const l=m&&LS.find(x=>x.n===+m[1]);
+  if(l)lesson(l); else if(h==='#mapa')mapPage(); else if(h==='#o-kursu'){aboutPage();const cb=document.getElementById('copyUrl');if(cb)cb.onclick=()=>{const done=()=>{cb.textContent=TR('Kopirano')};const sel=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById('officialUrl'));const s=getSelection();s.removeAllRanges();s.addRange(r);cb.textContent=TR('Označeno, kopiraj ručno')};try{navigator.clipboard.writeText(OFFICIAL).then(done,sel)}catch(e){sel()}}} else home();
+  app.insertAdjacentHTML('beforeend',SITEFOOT);
+  document.documentElement.lang=mode==='cyr'?'sr-Cyrl':'sr-Latn';
+  walk(app); walk(document.querySelector('.brand')); walk(document.querySelector('.navl'));
+  window.scrollTo(0,0);
+}
+function setScriptBtns(){document.querySelectorAll('#scriptSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===mode))}
+document.querySelectorAll('#scriptSeg button').forEach(b=>b.onclick=()=>{
+  if(mode===b.dataset.m)return; mode=b.dataset.m; try{localStorage.setItem('fiz-pismo',mode)}catch(e){}
+  setScriptBtns(); document.querySelector('.brand').innerHTML='<i>F</i>Fizika bez straha'; document.querySelector('.navl').textContent='Mapa veza';
+  const b2=document.querySelectorAll('#scriptSeg button'); b2[0].textContent='Latinica'; b2[1].textContent=mode==='cyr'?'Ћирилица':'Ćirilica';
+  const y=window.scrollY; route(); window.scrollTo(0,y);
+});
+setScriptBtns(); if(mode==='cyr'){document.querySelectorAll('#scriptSeg button')[1].textContent='Ћирилица'}
+window.addEventListener('hashchange',route);
+route();
+})();
+if('serviceWorker' in navigator && location.protocol==='https:'){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script>
+</body>
+</html>
